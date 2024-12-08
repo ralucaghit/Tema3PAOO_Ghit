@@ -6,12 +6,20 @@
 //Item 12: Copy all parts of an object.
 
 class Tren {
-    std::string nume;
+    std::string* nume; // Pointer pentru a simula alocarea dinamică
     int vagoane;
 
 public:
+
     Tren(const std::string& nume, int vagoane)
-        : nume(nume), vagoane(vagoane) {}
+        : nume(new std::string(nume)), vagoane(vagoane) {}
+
+    //constructor de copiere
+    Tren(const Tren& other)
+        : nume(new std::string(*other.nume)), vagoane(other.vagoane){
+            std::cout << "Ai apelat la copy constructor!" << "\n";
+        }
+    
 
 //operatorul de atribuire
     Tren& operator=(const Tren& other) {
@@ -21,14 +29,22 @@ public:
             return *this;
         }
 
-        //copiez datele obiectului `other` in `*this`
-        nume = other.nume;
+        // eliberez resursele existente
+        delete nume;
+
+        //copiez datele obiectului `other`
+        nume = new std::string(*other.nume);
         vagoane = other.vagoane;
         return *this; //returnez o referință la obiectul curent
     }
 
+    // Destructor
+    ~Tren() {
+        delete nume;
+    }
+
     void afiseaza() const {
-        std::cout << "Nume tren: " << nume << ", Vagoane: " << vagoane << "\n";
+        std::cout << "Nume tren: " << *nume << ", Vagoane: " << vagoane << "\n";
     }
 };
 
@@ -42,8 +58,16 @@ int main() {
 */
 
     //item 11
-    t1=t1;
+    /*t1=t1;
     t1.afiseaza();
+*/
+
+    //item 12
+    t1=t2;          //operatorul de atribuire
+    t1.afiseaza();
+
+    Tren t3 = t1;   //constructorul de copiere
+    t3.afiseaza();
 
     return 0;
 }
